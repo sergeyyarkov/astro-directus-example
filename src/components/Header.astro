@@ -1,0 +1,43 @@
+---
+import { Icon } from 'astro-icon';
+
+const links = [
+  { href: '/', name: 'Home' },
+  { href: '/about/', name: 'About' },
+  { href: '/contact/', name: 'Contact' },
+];
+---
+
+<header>
+  <div>
+    <div class='flex justify-between items-center'>
+      <h1>Web Blog</h1>
+      <span>
+        <Icon name='blog' width='52' height='52' />
+      </span>
+    </div>
+    <nav class='mt-2'>
+      <ul class='flex space-x-4'>
+        {
+          links.map((l) => (
+            <li>
+              <a
+                class:list={[
+                  'hover:underline italic',
+                  { 'font-bold': Astro.url.pathname.slice(1) === l.href.slice(1) },
+                ]}
+                href={l.href}>
+                {l.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+  <hr />
+  <p class='italic text-gray-700'>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque debitis nemo nulla praesentium!
+    Qui praesentium quos alias neque, optio beatae.
+  </p>
+</header>

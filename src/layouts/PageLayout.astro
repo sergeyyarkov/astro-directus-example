@@ -1,0 +1,27 @@
+---
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export interface Props {
+  title?: string;
+  lang?: string;
+  noindex?: boolean;
+}
+
+const { lang = 'en', title, noindex = false } = Astro.props as Props;
+---
+
+<html lang={lang}>
+  <BaseHead title={title} noindex={noindex} />
+  <body>
+    <div class='max-w-[800px] mx-auto py-7 px-4 flex flex-col min-h-screen'>
+      <Header />
+      <main class='mt-10 flex-auto'>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

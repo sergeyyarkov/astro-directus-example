@@ -1,0 +1,28 @@
+---
+import { CollectionEntry, getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
+const { title, description, image, pubDate } = post.data;
+const { Content } = await post.render();
+---
+
+<PageLayout title={title}>
+  <div class='flex justify-between flex-wrap gap-3 items-center'>
+    <h1>{title}</h1>
+    <span class='italic'>
+      Published: <time datetime={pubDate.toISOString()}>{pubDate.toLocaleDateString()}</time>
+    </span>
+  </div>
+  <hr />
+  <p>{description}</p>
+  {image && <img class='my-5' src={image} alt={title} />}
+  <div>
+    <Content />
+  </div>
+</PageLayout>

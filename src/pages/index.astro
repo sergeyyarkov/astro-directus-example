@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../layouts/PageLayout.astro';
+
+const posts = await getCollection('blog', (e) => !e.data.draft);
+---
+
+<PageLayout title={'Welcome to my blog'}>
+  <section>
+    {
+      posts.map((p) => (
+        <article class='border-b'>
+          <a href={`/blog/${p.slug}/`}>
+            <div class='lg:flex lg:items-center'>
+              <div class='py-2'>
+                <h2>{p.data.title}</h2>
+                <p>{p.data.description}</p>
+                <time class='italic text-sm' datetime={p.data.pubDate.toISOString()}>
+                  Published: {p.data.pubDate.toLocaleDateString()}
+                </time>
+              </div>
+              {p.data.image && (
+                <div class='lg:ml-5 flex justify-center border-t py-5 lg:py-0 lg:border-none'>
+                  <img
+                    class='w-full md:max-w-[500px] lg:max-w-[700px]'
+                    src={p.data.image}
+                    alt={p.data.title}
+                  />
+                </div>
+              )}
+            </div>
+          </a>
+        </article>
+      ))
+    }
+  </section>
+</PageLayout>

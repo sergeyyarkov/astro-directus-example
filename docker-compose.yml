@@ -1,0 +1,70 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: .
+      target: production
+    container_name: web
+    volumes:
+      - './nginx/conf.d:/etc/nginx/conf.d'
+      - './nginx/nginx.conf:/etc/nginx/nginx.conf'
+    ports:
+      - '80:80'
+    networks:
+      - directus
+    depends_on:
+      - directus
+
+  database:
+    image: postgres:15-alpine
+    container_name: database
+    environment:
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus
+      POSTGRES_DB: directus
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - directus
+
+  cache:
+    container_name: cache
+    image: redis:6
+    networks:
+      - directus
+
+  directus:
+    image: directus/directus:latest
+    ports:
+      - 8055
+    volumes:
+      - uploads:/directus/uploads
+    depends_on:
+      - cache
+      - database
+    networks:
+      - directus
+    environment:
+      KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
+      SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
+
+      DB_CLIENT: 'pg'
+      DB_HOST: 'database'
+      DB_PORT: '5432'
+      DB_DATABASE: 'directus'
+      DB_USER: 'directus'
+      DB_PASSWORD: 'directus'
+
+      CACHE_ENABLED: 'true'
+      CACHE_STORE: 'redis'
+      CACHE_REDIS: 'redis://cache:6379'
+
+      ADMIN_EMAIL: 'admin@example.com'
+      ADMIN_PASSWORD: 'd1r3ctu5'
+volumes:
+  db-data:
+  uploads:
+networks:
+  directus:
