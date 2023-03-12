@@ -1,7 +1,35 @@
 ---
-import PageLayout from '../layouts/PageLayout.astro';
+import PageLayout from '@layouts/PageLayout.astro';
+import { client as directus } from '@lib/directus';
+import { Icon } from 'astro-icon';
+
+const data = await directus.singleton('contacts').read();
 ---
 
-<PageLayout title={'Contact'}>
-  <div>...</div>
+<PageLayout title={data?.heading || 'Contacts'}>
+  <div>
+    <h1>{data?.heading}</h1>
+    <div set:html={data?.body} />
+    <hr />
+    {
+      data?.contacts && (
+        <ul class='flex'>
+          {data.contacts.map((c) => (
+            <li class='flex items-center mr-5 italic text-sm mb-1.5'>
+              <span class='mr-1.5'>
+                <Icon name={c?.icon} height={16} width={16} />
+              </span>
+              {c?.href_prefix ? (
+                <a class='underline' href={`${c.href_prefix}:${c.data}`}>
+                  {c.data}
+                </a>
+              ) : (
+                c.data
+              )}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
 </PageLayout>

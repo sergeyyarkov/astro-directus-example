@@ -1,28 +1,30 @@
 ---
-import { CollectionEntry, getCollection } from 'astro:content';
-import PageLayout from '../../layouts/PageLayout.astro';
+import type { DefaultItem } from '@directus/sdk';
+import type { ArticleCollection } from '@lib/directus-collections';
+import { getLatestArticles } from '@lib/api';
+import { getAssetURL } from '@lib/directus';
+import PageLayout from '@layouts/PageLayout.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  const articles = await getLatestArticles();
+  return articles.data?.map((article) => ({ params: { slug: article.slug }, props: { article } }));
 }
 
-const { post } = Astro.props as { post: CollectionEntry<'blog'> };
-const { title, description, image, pubDate } = post.data;
-const { Content } = await post.render();
+const { article } = Astro.props as { article: DefaultItem<ArticleCollection> };
+const { title, description, cover, body, date_created } = article;
 ---
 
 <PageLayout title={title}>
   <div class='flex justify-between flex-wrap gap-3 items-center'>
     <h1>{title}</h1>
     <span class='italic'>
-      Published: <time datetime={pubDate.toISOString()}>{pubDate.toLocaleDateString()}</time>
+      Published: <time datetime={new Date(date_created).toISOString()}
+        >{new Date(date_created).toLocaleDateString()}</time
+      >
     </span>
   </div>
   <hr />
   <p>{description}</p>
-  {image && <img class='my-5' src={image} alt={title} />}
-  <div>
-    <Content />
-  </div>
+  {cover && <img class='my-5' src={getAssetURL(cover)} alt={title} />}
+  <div set:html={body} />
 </PageLayout>

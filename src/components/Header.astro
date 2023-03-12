@@ -1,5 +1,8 @@
 ---
 import { Icon } from 'astro-icon';
+import { client as directus } from '@lib/directus';
+
+const siteSettings = await directus.singleton('settings').read();
 
 const links = [
   { href: '/', name: 'Home' },
@@ -11,9 +14,9 @@ const links = [
 <header>
   <div>
     <div class='flex justify-between items-center'>
-      <h1>Web Blog</h1>
+      <h1>{siteSettings?.site_title}</h1>
       <span>
-        <Icon name='blog' width='52' height='52' />
+        <Icon name={siteSettings?.site_icon || 'mdi:rss-feed'} width='52' height='52' />
       </span>
     </div>
     <nav class='mt-2'>
@@ -37,7 +40,6 @@ const links = [
   </div>
   <hr />
   <p class='italic text-gray-700'>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque debitis nemo nulla praesentium!
-    Qui praesentium quos alias neque, optio beatae.
+    {siteSettings?.site_description}
   </p>
 </header>

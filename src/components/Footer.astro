@@ -1,8 +1,11 @@
 ---
+import { client as directus } from '@lib/directus';
+
+const siteSettings = await directus.singleton('settings').read();
 const year = new Date().getFullYear();
 ---
 
 <footer>
   <hr />
-  <small>Web Blog &copy; {year}</small>
+  <small>{siteSettings?.site_title} &copy; {year}</small>
 </footer>

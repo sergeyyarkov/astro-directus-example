@@ -1,7 +1,13 @@
 ---
-import PageLayout from '../layouts/PageLayout.astro';
+import PageLayout from '@layouts/PageLayout.astro';
+import { client as directus } from '@lib/directus';
+
+const data = await directus.singleton('about_us').read();
 ---
 
-<PageLayout title={'About'}>
-  <div>...</div>
+<PageLayout title={data?.heading || 'About'}>
+  <div>
+    <h1>{data?.heading}</h1>
+    <div set:html={data?.body} />
+  </div>
 </PageLayout>

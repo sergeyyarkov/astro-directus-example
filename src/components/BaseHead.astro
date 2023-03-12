@@ -1,9 +1,12 @@
 ---
+import { client as directus } from '@lib/directus';
+
 export interface Props {
   title?: string;
   noindex?: boolean;
 }
 
+const siteSettings = await directus.singleton('settings').read();
 const { title = 'Blog', noindex = false } = Astro.props as Props;
 ---
 
@@ -13,6 +16,6 @@ const { title = 'Blog', noindex = false } = Astro.props as Props;
   <meta name='viewport' content='width=device-width' />
   <meta name='generator' content={Astro.generator} />
   {noindex && <meta name='robots' content='noindex' />}
-  <title>{title}</title>
+  <title>{`${title} | ${siteSettings?.site_title}`}</title>
   <slot />
 </head>

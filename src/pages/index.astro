@@ -1,30 +1,31 @@
 ---
-import { getCollection } from 'astro:content';
-import PageLayout from '../layouts/PageLayout.astro';
+import { getLatestArticles } from '@lib/api';
+import { getAssetURL } from '@lib/directus';
+import PageLayout from '@layouts/PageLayout.astro';
 
-const posts = await getCollection('blog', (e) => !e.data.draft);
+const articles = await getLatestArticles();
 ---
 
-<PageLayout title={'Welcome to my blog'}>
+<PageLayout title={'Main'}>
   <section>
     {
-      posts.map((p) => (
+      articles.data?.map((a) => (
         <article class='border-b'>
-          <a href={`/blog/${p.slug}/`}>
+          <a href={`/blog/${a.slug}/`}>
             <div class='lg:flex lg:items-center'>
               <div class='py-2'>
-                <h2>{p.data.title}</h2>
-                <p>{p.data.description}</p>
-                <time class='italic text-sm' datetime={p.data.pubDate.toISOString()}>
-                  Published: {p.data.pubDate.toLocaleDateString()}
+                <h2>{a.title}</h2>
+                <p>{a.description}</p>
+                <time class='italic text-sm' datetime={new Date(a.date_created).toISOString()}>
+                  Published: {new Date(a.date_created).toLocaleDateString()}
                 </time>
               </div>
-              {p.data.image && (
+              {a.cover && (
                 <div class='lg:ml-5 flex justify-center border-t py-5 lg:py-0 lg:border-none'>
                   <img
                     class='w-full md:max-w-[500px] lg:max-w-[700px]'
-                    src={p.data.image}
-                    alt={p.data.title}
+                    src={getAssetURL(a.cover)}
+                    alt={a.title}
                   />
                 </div>
               )}

@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+  web:
+    restart: 'always'
+    build:
+      context: .
+      target: development
+    container_name: web
+    volumes:
+      - './:/app'
+    network_mode: host
+    depends_on:
+      - directus
+    environment:
+      - DIRECTUS_URL=http://localhost:8055
+      - DIRECTUS_EMAIL=admin@example.com
+      - DIRECTUS_PASSWORD=d1r3ctu5
+      - DIRECTUS_STATIC_TOKEN=
+
+  database:
+    image: postgres:15-alpine
+    container_name: database
+    environment:
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus
+      POSTGRES_DB: directus
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - directus
+
+  directus:
+    image: directus/directus:latest
+    ports:
+      - '8055:8055'
+    volumes:
+      - uploads:/directus/uploads
+    depends_on:
+      - database
+    networks:
+      - directus
+    environment:
+      KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
+      SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
+
+      MAX_PAYLOAD_SIZE: '100mb'
+
+      DB_CLIENT: 'pg'
+      DB_HOST: 'database'
+      DB_PORT: '5432'
+      DB_DATABASE: 'directus'
+      DB_USER: 'directus'
+      DB_PASSWORD: 'directus'
+
+      ADMIN_EMAIL: 'admin@example.com'
+      ADMIN_PASSWORD: 'd1r3ctu5'
+volumes:
+  db-data:
+  uploads:
+networks:
+  directus:
