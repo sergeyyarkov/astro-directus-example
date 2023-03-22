@@ -2,17 +2,35 @@ version: '3.8'
 services:
   web:
     build:
-      context: .
+      context: ./website
       target: production
+      network: host
     container_name: web
     volumes:
-      - './nginx/conf.d:/etc/nginx/conf.d'
+      - './website/nginx/conf.d:/etc/nginx/conf.d:rw'
+    networks:
+      - directus
+    ports:
+      - '80'
+    depends_on:
+      - directus
+      - nginx
+    environment:
+      - DIRECTUS_URL=http://localhost:8055
+      - DIRECTUS_EMAIL=admin@example.com
+      - DIRECTUS_PASSWORD=d1r3ctu5
+      - DIRECTUS_STATIC_TOKEN=
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.23.3-alpine
+    volumes:
       - './nginx/nginx.conf:/etc/nginx/nginx.conf'
     ports:
       - '80:80'
-    networks:
-      - directus
     depends_on:
+      - directus
+    networks:
       - directus
 
   database:
@@ -29,26 +47,27 @@ services:
     networks:
       - directus
 
-  cache:
-    container_name: cache
-    image: redis:6
-    networks:
-      - directus
+  # cache:
+  #   container_name: cache
+  #   image: redis:6
+  #   networks:
+  #     - directus
 
   directus:
     image: directus/directus:latest
     ports:
-      - 8055
+      - 8055:8055
     volumes:
       - uploads:/directus/uploads
     depends_on:
-      - cache
       - database
     networks:
       - directus
     environment:
       KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
       SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
+
+      MAX_PAYLOAD_SIZE: '100mb'
 
       DB_CLIENT: 'pg'
       DB_HOST: 'database'
@@ -57,9 +76,9 @@ services:
       DB_USER: 'directus'
       DB_PASSWORD: 'directus'
 
-      CACHE_ENABLED: 'true'
-      CACHE_STORE: 'redis'
-      CACHE_REDIS: 'redis://cache:6379'
+      # CACHE_ENABLED: 'false'
+      # CACHE_STORE: 'redis'
+      # CACHE_REDIS: 'redis://cache:6379'
 
       ADMIN_EMAIL: 'admin@example.com'
       ADMIN_PASSWORD: 'd1r3ctu5'
