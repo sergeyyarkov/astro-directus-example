@@ -15,9 +15,9 @@ export type ContactsCollection = {
 
 export type ArticleCollection = {
   id: ID;
-  status: string;
+  status: 'published' | 'draft' | 'archieved';
   title: string;
-  slug: 'published' | 'draft' | 'archieved';
+  slug: string;
   description?: string;
   cover?: string;
   body?: string;
@@ -34,8 +34,8 @@ export type SettingsCollection = {
 };
 
 export type DirectusCollections = {
+  articles: ArticleCollection;
   about_us: AboutUsCollection;
   contacts: ContactsCollection;
-  articles: ArticleCollection;
   settings: SettingsCollection;
 };

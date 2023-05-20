@@ -6,7 +6,7 @@ import { Icon } from 'astro-icon';
 const data = await directus.singleton('contacts').read();
 ---
 
-<PageLayout title={data?.heading || 'Contacts'}>
+<PageLayout title={'Contacts'}>
   <div>
     <h1>{data?.heading}</h1>
     <div set:html={data?.body} />
@@ -16,10 +16,12 @@ const data = await directus.singleton('contacts').read();
         <ul class='flex'>
           {data.contacts.map((c) => (
             <li class='flex items-center mr-5 italic text-sm mb-1.5'>
-              <span class='mr-1.5'>
-                <Icon name={c?.icon} height={16} width={16} />
-              </span>
-              {c?.href_prefix ? (
+              {c.icon && (
+                <span class='mr-1.5'>
+                  <Icon name={c.icon} height={16} width={16} />
+                </span>
+              )}
+              {c.href_prefix ? (
                 <a class='underline' href={`${c.href_prefix}:${c.data}`}>
                   {c.data}
                 </a>
