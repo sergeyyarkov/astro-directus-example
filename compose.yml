@@ -11,8 +11,6 @@ services:
         - 'CACHE_DATE=$(date +%Y-%m-%d:%H:%M:%S)'
     networks:
       - directus
-    ports:
-      - '3000'
     volumes:
       - './website/nginx/conf.d:/etc/nginx/conf.d:rw'
     env_file:
@@ -31,6 +29,8 @@ services:
       - directus
     networks:
       - directus
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   database:
     image: postgres:15-alpine
@@ -42,14 +42,14 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5432
     networks:
       - directus
 
   directus:
     image: directus/directus:10.0.0
     ports:
-      - 8055:8055
+      - 8055
     volumes:
       - uploads:/directus/uploads
     depends_on:

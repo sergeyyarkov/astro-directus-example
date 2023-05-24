@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/sh
 
 reload_nginx() {  
   docker exec nginx nginx -s reload  
