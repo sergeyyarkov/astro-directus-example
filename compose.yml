@@ -18,7 +18,7 @@ services:
       - ./website/.env
 
   nginx:
-    # restart: 'always'
+    restart: 'always'
     container_name: nginx
     image: nginx:1.23.3-alpine
     volumes:
