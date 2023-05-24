@@ -9,6 +9,7 @@ services:
         - 'cms.localhost:127.0.0.1'
       args:
         - 'CACHE_DATE=$(date +%Y-%m-%d:%H:%M:%S)'
+    image: astroweb:v1.0
     networks:
       - directus
     volumes:
