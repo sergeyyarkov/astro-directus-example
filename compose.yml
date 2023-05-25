@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   web:
-    restart: 'always'
+    restart: unless-stopped
     build:
       context: ./website
       network: host
@@ -23,7 +23,7 @@ services:
       - './website/nginx/conf.d:/etc/nginx/conf.d:rw'
 
   nginx:
-    restart: 'always'
+    restart: unless-stopped
     container_name: nginx
     image: nginx:1.23.3-alpine
     volumes:
@@ -39,6 +39,7 @@ services:
       - 'host.docker.internal:host-gateway'
 
   database:
+    restart: unless-stopped
     image: postgres:15-alpine
     container_name: database
     environment:
@@ -54,6 +55,7 @@ services:
       - directus
 
   directus:
+    restart: unless-stopped
     image: directus/directus:10.0.0
     ports:
       - 8055
