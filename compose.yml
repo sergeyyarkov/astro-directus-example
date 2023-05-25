@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   web:
+    restart: 'always'
     build:
       context: ./website
       network: host
@@ -16,6 +17,8 @@ services:
     image: astroweb:v1.0
     networks:
       - directus
+    depends_on:
+      - nginx
     volumes:
       - './website/nginx/conf.d:/etc/nginx/conf.d:rw'
 
@@ -44,6 +47,7 @@ services:
       POSTGRES_DB: directus
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
     ports:
       - 5432
     networks:
