@@ -9,13 +9,15 @@ services:
         - 'cms.localhost:127.0.0.1'
       args:
         - 'CACHE_DATE=$(date +%Y-%m-%d:%H:%M:%S)'
+        - 'DIRECTUS_URL=http://cms.localhost'
+        - 'DIRECTUS_EMAIL=admin@example.com'
+        - 'DIRECTUS_PASSWORD=d1r3ctu5'
+        - 'DIRECTUS_STATIC_TOKEN='
     image: astroweb:v1.0
     networks:
       - directus
     volumes:
       - './website/nginx/conf.d:/etc/nginx/conf.d:rw'
-    env_file:
-      - ./website/.env
 
   nginx:
     restart: 'always'
@@ -69,6 +71,8 @@ services:
       DB_PASSWORD: 'directus'
       ADMIN_EMAIL: 'admin@example.com'
       ADMIN_PASSWORD: 'd1r3ctu5'
+      # PUBLIC_URL: 'https://cms.localhost'
+
 volumes:
   db-data:
   uploads:

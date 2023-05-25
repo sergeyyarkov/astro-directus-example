@@ -9,5 +9,3 @@ sleep 1
 say_hello
 sleep 1
 say_hello
-sleep 1
-say_hello
